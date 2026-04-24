@@ -1,0 +1,36 @@
+.backend-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.backend-label {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.backend-options {
+  display: flex;
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.backend-btn {
+  padding: 5px 14px;
+  font-size: 13px;
+  border: none;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  transition: background 0.15s, color 0.15s;
+}
+
+.backend-btn:hover {
+  background: var(--color-bg);
+}
+
+.backend-btn.active {
+  background: var(--color-purple-bg);
+  color: var(--color-purple-text);
+  font-weight: 500;
+}

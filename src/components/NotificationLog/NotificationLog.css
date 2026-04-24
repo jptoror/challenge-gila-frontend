@@ -1,0 +1,129 @@
+.log-card {
+  background: var(--color-surface);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.log-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.reload-btn {
+  padding: 5px 14px;
+  font-size: 13px;
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  transition: background 0.15s;
+}
+
+.reload-btn:hover:not(:disabled) {
+  background: var(--color-purple-bg);
+  color: var(--color-purple-text);
+  border-color: #afa9ec;
+}
+
+.reload-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.log-error {
+  padding: 10px 14px;
+  background: var(--color-red-bg);
+  color: var(--color-red-text);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.log-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.log-table-wrap {
+  overflow-x: auto;
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.log-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.log-table td {
+  padding: 12px 12px;
+  border-bottom: 0.5px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.log-table tr:last-child td {
+  border-bottom: none;
+}
+
+.log-table tr:hover td {
+  background: var(--color-bg);
+}
+
+.user-name {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.channel-tag {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.message-body {
+  color: var(--color-text-secondary);
+  max-width: 200px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sent-at {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.log-footer {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.log-count {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
