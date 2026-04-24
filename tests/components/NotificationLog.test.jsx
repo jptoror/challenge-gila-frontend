@@ -14,16 +14,16 @@ const mockLogs = [
     'user-name': 'Carlos Ruiz',
     category: 'sports',
     channel: 'sms',
-    body: 'Gol de Honduras!',
+    body: 'Goal for Honduras!',
     success: true,
     'sent-at': '2024-03-15T10:30:00Z',
   },
   {
     id: 2,
-    'user-name': 'Ana López',
+    'user-name': 'Ana Lopez',
     category: 'finance',
     channel: 'email',
-    body: 'Dólar sube',
+    body: 'Dollar rising',
     success: false,
     'sent-at': '2024-03-15T10:31:00Z',
   },
@@ -34,24 +34,24 @@ describe('NotificationLog', () => {
     vi.clearAllMocks()
   })
 
-  it('muestra mensaje cuando no hay logs', async () => {
+  it('shows a message when there are no logs', async () => {
     fetchLogs.mockResolvedValue([])
     render(<NotificationLog refreshTrigger={0} />)
     await waitFor(() => {
-      expect(screen.getByText(/no hay notificaciones/i)).toBeInTheDocument()
+      expect(screen.getByText(/no notifications yet/i)).toBeInTheDocument()
     })
   })
 
-  it('renderiza los logs cuando hay datos', async () => {
+  it('renders the logs when data is present', async () => {
     fetchLogs.mockResolvedValue(mockLogs)
     render(<NotificationLog refreshTrigger={0} />)
     await waitFor(() => {
       expect(screen.getByText('Carlos Ruiz')).toBeInTheDocument()
-      expect(screen.getByText('Ana López')).toBeInTheDocument()
+      expect(screen.getByText('Ana Lopez')).toBeInTheDocument()
     })
   })
 
-  it('muestra el canal de cada log', async () => {
+  it('shows the channel for each log', async () => {
     fetchLogs.mockResolvedValue(mockLogs)
     render(<NotificationLog refreshTrigger={0} />)
     await waitFor(() => {
@@ -60,49 +60,49 @@ describe('NotificationLog', () => {
     })
   })
 
-  it('muestra badge de éxito y fallido correctamente', async () => {
+  it('shows success and failure badges correctly', async () => {
     fetchLogs.mockResolvedValue(mockLogs)
     render(<NotificationLog refreshTrigger={0} />)
     await waitFor(() => {
-      expect(screen.getByText('Enviado')).toBeInTheDocument()
-      expect(screen.getByText('Fallido')).toBeInTheDocument()
+      expect(screen.getByText('Sent')).toBeInTheDocument()
+      expect(screen.getByText('Failed')).toBeInTheDocument()
     })
   })
 
-  it('muestra error cuando el API falla', async () => {
-    fetchLogs.mockRejectedValue(new Error('Sin conexión'))
+  it('shows an error when the API fails', async () => {
+    fetchLogs.mockRejectedValue(new Error('No connection'))
     render(<NotificationLog refreshTrigger={0} />)
     await waitFor(() => {
-      expect(screen.getByRole('alert')).toHaveTextContent('Sin conexión')
+      expect(screen.getByRole('alert')).toHaveTextContent('No connection')
     })
   })
 
-  it('muestra el conteo de registros', async () => {
+  it('shows the record count', async () => {
     fetchLogs.mockResolvedValue(mockLogs)
     render(<NotificationLog refreshTrigger={0} />)
     await waitFor(() => {
-      expect(screen.getByText(/2 registros/i)).toBeInTheDocument()
+      expect(screen.getByText(/2 records/i)).toBeInTheDocument()
     })
   })
 
-  it('renderiza logs en formato camelCase de Spring Boot', async () => {
+  it('renders logs in Spring Boot camelCase format', async () => {
     fetchLogs.mockResolvedValue([
       {
         id: 99,
         userId: 3,
-        userName: 'Laura Gómez',
+        userName: 'Laura Gomez',
         channel: 'push',
         category: 'movies',
-        body: 'Estreno hoy',
+        body: 'Premiere today',
         success: true,
         sentAt: '2024-03-15T10:30:00Z',
       },
     ])
     render(<NotificationLog refreshTrigger={0} />)
     await waitFor(() => {
-      expect(screen.getByText('Laura Gómez')).toBeInTheDocument()
+      expect(screen.getByText('Laura Gomez')).toBeInTheDocument()
       expect(screen.getByText('Push')).toBeInTheDocument()
-      expect(screen.getByText('Estreno hoy')).toBeInTheDocument()
+      expect(screen.getByText('Premiere today')).toBeInTheDocument()
     })
   })
 })

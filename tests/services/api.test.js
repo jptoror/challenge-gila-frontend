@@ -2,32 +2,32 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { sendMessage, fetchLogs, setBackend, getBackend } from '../../src/services/api.js'
 
 describe('api.js — setBackend / getBackend', () => {
-  it('el backend por defecto es clojure', () => {
+  it('default backend is clojure', () => {
     expect(getBackend()).toBe('clojure')
   })
 
-  it('setBackend cambia el backend activo', () => {
+  it('setBackend switches the active backend', () => {
     setBackend('springboot')
     expect(getBackend()).toBe('springboot')
     setBackend('clojure')
   })
 
-  it('setBackend lanza error con backend desconocido', () => {
-    expect(() => setBackend('laravel')).toThrow('Backend desconocido: laravel')
+  it('setBackend throws on an unknown backend', () => {
+    expect(() => setBackend('laravel')).toThrow('Unknown backend: laravel')
   })
 })
 
-describe('api.js — sendMessage validaciones', () => {
-  it('lanza error si category está vacío', async () => {
-    await expect(sendMessage('', 'mensaje')).rejects.toThrow('categoría')
+describe('api.js — sendMessage validation', () => {
+  it('throws when category is empty', async () => {
+    await expect(sendMessage('', 'message')).rejects.toThrow('Category')
   })
 
-  it('lanza error si body está vacío', async () => {
-    await expect(sendMessage('sports', '')).rejects.toThrow('vacío')
+  it('throws when body is empty', async () => {
+    await expect(sendMessage('sports', '')).rejects.toThrow('empty')
   })
 
-  it('lanza error si body es solo espacios', async () => {
-    await expect(sendMessage('sports', '   ')).rejects.toThrow('vacío')
+  it('throws when body is only whitespace', async () => {
+    await expect(sendMessage('sports', '   ')).rejects.toThrow('empty')
   })
 })
 
@@ -40,13 +40,13 @@ describe('api.js — sendMessage fetch', () => {
     vi.restoreAllMocks()
   })
 
-  it('llama al endpoint correcto con POST', async () => {
+  it('calls the correct endpoint with POST', async () => {
     global.fetch.mockResolvedValue({
       ok: true,
       json: async () => ({ category: 'sports', 'users-reached': 2, results: [] }),
     })
 
-    await sendMessage('sports', 'Gol!')
+    await sendMessage('sports', 'Goal!')
 
     expect(fetch).toHaveBeenCalledWith(
       expect.stringContaining('/api/messages'),
@@ -54,7 +54,7 @@ describe('api.js — sendMessage fetch', () => {
     )
   })
 
-  it('retorna los datos cuando la respuesta es ok', async () => {
+  it('returns the data when the response is ok', async () => {
     const mockData = { category: 'sports', 'users-reached': 2, results: [] }
     global.fetch.mockResolvedValue({ ok: true, json: async () => mockData })
 
@@ -62,18 +62,18 @@ describe('api.js — sendMessage fetch', () => {
     expect(result).toEqual(mockData)
   })
 
-  it('lanza error cuando la respuesta no es ok', async () => {
+  it('throws when the response is not ok', async () => {
     global.fetch.mockResolvedValue({
       ok: false,
       status: 422,
-      json: async () => ({ error: 'Validación fallida' }),
+      json: async () => ({ error: 'Validation failed' }),
     })
 
-    await expect(sendMessage('sports', 'Test')).rejects.toThrow('Validación fallida')
+    await expect(sendMessage('sports', 'Test')).rejects.toThrow('Validation failed')
   })
 })
 
-describe('api.js — ruteo por backend', () => {
+describe('api.js — backend routing', () => {
   beforeEach(() => {
     global.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ logs: [] }) })
   })
@@ -83,7 +83,7 @@ describe('api.js — ruteo por backend', () => {
     vi.restoreAllMocks()
   })
 
-  it('con backend clojure usa el puerto 3010', async () => {
+  it('with clojure backend uses port 3010', async () => {
     setBackend('clojure')
     await fetchLogs()
     expect(fetch).toHaveBeenCalledWith(
@@ -91,7 +91,7 @@ describe('api.js — ruteo por backend', () => {
     )
   })
 
-  it('con backend springboot usa el puerto 8088', async () => {
+  it('with springboot backend uses port 8088', async () => {
     setBackend('springboot')
     await fetchLogs()
     expect(fetch).toHaveBeenCalledWith(
@@ -109,7 +109,7 @@ describe('api.js — fetchLogs', () => {
     vi.restoreAllMocks()
   })
 
-  it('retorna array de logs cuando la respuesta es ok', async () => {
+  it('returns the logs array when the response is ok', async () => {
     const mockLogs = [{ id: 1, channel: 'sms', category: 'sports' }]
     global.fetch.mockResolvedValue({
       ok: true,
@@ -120,7 +120,7 @@ describe('api.js — fetchLogs', () => {
     expect(result).toEqual(mockLogs)
   })
 
-  it('retorna array vacío si no hay logs', async () => {
+  it('returns an empty array when there are no logs', async () => {
     global.fetch.mockResolvedValue({
       ok: true,
       json: async () => ({ logs: [] }),
@@ -130,13 +130,13 @@ describe('api.js — fetchLogs', () => {
     expect(result).toEqual([])
   })
 
-  it('lanza error cuando la respuesta no es ok', async () => {
+  it('throws when the response is not ok', async () => {
     global.fetch.mockResolvedValue({
       ok: false,
       status: 500,
-      json: async () => ({ error: 'Error interno' }),
+      json: async () => ({ error: 'Internal error' }),
     })
 
-    await expect(fetchLogs()).rejects.toThrow('Error interno')
+    await expect(fetchLogs()).rejects.toThrow('Internal error')
   })
 })

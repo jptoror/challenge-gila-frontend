@@ -19,7 +19,7 @@ const CHANNEL_LABELS = {
 function formatDate(raw) {
   if (!raw) return '—'
   try {
-    return new Intl.DateTimeFormat('es', {
+    return new Intl.DateTimeFormat('en', {
       day:    '2-digit',
       month:  '2-digit',
       year:   'numeric',
@@ -63,9 +63,9 @@ export default function NotificationLog({ refreshTrigger }) {
   return (
     <div className="log-card">
       <div className="log-header">
-        <h2 className="log-title">Historial de notificaciones</h2>
+        <h2 className="log-title">Notification history</h2>
         <button className="reload-btn" onClick={reload} disabled={loading}>
-          {loading ? 'Cargando...' : 'Actualizar'}
+          {loading ? 'Loading...' : 'Refresh'}
         </button>
       </div>
 
@@ -74,7 +74,7 @@ export default function NotificationLog({ refreshTrigger }) {
       )}
 
       {!error && logs.length === 0 && !loading && (
-        <div className="log-empty">No hay notificaciones aún. Envía un mensaje para comenzar.</div>
+        <div className="log-empty">No notifications yet. Send a message to get started.</div>
       )}
 
       {logs.length > 0 && (
@@ -82,12 +82,12 @@ export default function NotificationLog({ refreshTrigger }) {
           <table className="log-table">
             <thead>
               <tr>
-                <th>Usuario</th>
-                <th>Categoría</th>
-                <th>Canal</th>
-                <th>Mensaje</th>
-                <th>Estado</th>
-                <th>Fecha</th>
+                <th>User</th>
+                <th>Category</th>
+                <th>Channel</th>
+                <th>Message</th>
+                <th>Status</th>
+                <th>Date</th>
               </tr>
             </thead>
             <tbody>
@@ -125,7 +125,7 @@ export default function NotificationLog({ refreshTrigger }) {
 
       <div className="log-footer">
         {logs.length > 0 && (
-          <span className="log-count">{logs.length} registro{logs.length !== 1 ? 's' : ''}</span>
+          <span className="log-count">{logs.length} record{logs.length !== 1 ? 's' : ''}</span>
         )}
       </div>
     </div>

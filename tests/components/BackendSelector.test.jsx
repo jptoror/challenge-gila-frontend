@@ -9,32 +9,32 @@ describe('BackendSelector', () => {
     setBackend('clojure')
   })
 
-  it('renderiza ambas opciones de backend', () => {
+  it('renders both backend options', () => {
     render(<BackendSelector />)
     expect(screen.getByRole('button', { name: /clojure/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /spring boot/i })).toBeInTheDocument()
   })
 
-  it('marca como activo el backend actual', () => {
+  it('marks the current backend as active', () => {
     render(<BackendSelector />)
     expect(screen.getByRole('button', { name: /clojure/i })).toHaveClass('active')
     expect(screen.getByRole('button', { name: /spring boot/i })).not.toHaveClass('active')
   })
 
-  it('al hacer click cambia el backend activo en el módulo api', async () => {
+  it('clicking updates the active backend in the api module', async () => {
     render(<BackendSelector />)
     await userEvent.click(screen.getByRole('button', { name: /spring boot/i }))
     expect(getBackend()).toBe('springboot')
   })
 
-  it('al hacer click dispara onChange con el nuevo backend', async () => {
+  it('clicking fires onChange with the new backend', async () => {
     const onChange = vi.fn()
     render(<BackendSelector onChange={onChange} />)
     await userEvent.click(screen.getByRole('button', { name: /spring boot/i }))
     expect(onChange).toHaveBeenCalledWith('springboot')
   })
 
-  it('actualiza el estilo activo al cambiar', async () => {
+  it('updates the active styling when switching', async () => {
     render(<BackendSelector />)
     await userEvent.click(screen.getByRole('button', { name: /spring boot/i }))
     expect(screen.getByRole('button', { name: /spring boot/i })).toHaveClass('active')

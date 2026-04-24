@@ -13,21 +13,21 @@ describe('useMessages', () => {
     vi.clearAllMocks()
   })
 
-  it('estado inicial correcto', () => {
+  it('has the correct initial state', () => {
     const { result } = renderHook(() => useMessages())
     expect(result.current.loading).toBe(false)
     expect(result.current.error).toBeNull()
     expect(result.current.result).toBeNull()
   })
 
-  it('loading es true durante el dispatch', async () => {
+  it('loading is true during dispatch', async () => {
     sendMessage.mockImplementation(() => new Promise(() => {}))
     const { result } = renderHook(() => useMessages())
     act(() => { result.current.dispatch('sports', 'Test') })
     expect(result.current.loading).toBe(true)
   })
 
-  it('guarda el resultado cuando el dispatch es exitoso', async () => {
+  it('stores the result when dispatch succeeds', async () => {
     const mockData = { category: 'sports', 'users-reached': 2 }
     sendMessage.mockResolvedValue(mockData)
     const { result } = renderHook(() => useMessages())
@@ -37,16 +37,16 @@ describe('useMessages', () => {
     expect(result.current.error).toBeNull()
   })
 
-  it('guarda el error cuando el dispatch falla', async () => {
-    sendMessage.mockRejectedValue(new Error('Fallo de red'))
+  it('stores the error when dispatch fails', async () => {
+    sendMessage.mockRejectedValue(new Error('Network failure'))
     const { result } = renderHook(() => useMessages())
     await act(async () => { await result.current.dispatch('sports', 'Test') })
-    expect(result.current.error).toBe('Fallo de red')
+    expect(result.current.error).toBe('Network failure')
     expect(result.current.result).toBeNull()
     expect(result.current.loading).toBe(false)
   })
 
-  it('reset limpia error y resultado', async () => {
+  it('reset clears error and result', async () => {
     sendMessage.mockRejectedValue(new Error('Error'))
     const { result } = renderHook(() => useMessages())
     await act(async () => { await result.current.dispatch('sports', 'Test') })

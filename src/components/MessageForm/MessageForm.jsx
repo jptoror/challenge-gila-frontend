@@ -29,11 +29,11 @@ export default function MessageForm({ onSuccess }) {
 
   return (
     <div className="form-card">
-      <h2 className="form-title">Enviar mensaje</h2>
+      <h2 className="form-title">Send message</h2>
 
       <form onSubmit={handleSubmit} className="form">
         <div className="field">
-          <label className="field-label" htmlFor="category">Categoría</label>
+          <label className="field-label" htmlFor="category">Category</label>
           <select
             id="category"
             className="field-input"
@@ -41,7 +41,7 @@ export default function MessageForm({ onSuccess }) {
             onChange={e => { setCategory(e.target.value); handleChange() }}
             required
           >
-            <option value="" disabled>Selecciona una categoría</option>
+            <option value="" disabled>Select a category</option>
             {CATEGORIES.map(c => (
               <option key={c.value} value={c.value}>{c.label}</option>
             ))}
@@ -49,17 +49,17 @@ export default function MessageForm({ onSuccess }) {
         </div>
 
         <div className="field">
-          <label className="field-label" htmlFor="body">Mensaje</label>
+          <label className="field-label" htmlFor="body">Message</label>
           <textarea
             id="body"
             className="field-input field-textarea"
-            placeholder="Escribe el mensaje aquí..."
+            placeholder="Write your message here..."
             value={body}
             onChange={e => { setBody(e.target.value); handleChange() }}
             rows={4}
             required
           />
-          <span className="field-hint">{body.trim().length} caracteres</span>
+          <span className="field-hint">{body.trim().length} characters</span>
         </div>
 
         {error && (
@@ -68,7 +68,7 @@ export default function MessageForm({ onSuccess }) {
 
         {result && (
           <div className="form-success" role="status">
-            Mensaje enviado a {result['users-reached'] ?? result.usersReached ?? 0} usuario{(result['users-reached'] ?? result.usersReached ?? 0) !== 1 ? 's' : ''}.
+            Message sent to {result['users-reached'] ?? result.usersReached ?? 0} user{(result['users-reached'] ?? result.usersReached ?? 0) !== 1 ? 's' : ''}.
           </div>
         )}
 
@@ -77,7 +77,7 @@ export default function MessageForm({ onSuccess }) {
           className="submit-btn"
           disabled={loading || !category || !body.trim()}
         >
-          {loading ? 'Enviando...' : 'Enviar notificación'}
+          {loading ? 'Sending...' : 'Send notification'}
         </button>
       </form>
     </div>

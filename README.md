@@ -1,14 +1,14 @@
 # Notification System — Frontend
 
-Cliente web (React 18 + Vite) para el sistema de notificaciones multicanal. Se conecta por HTTP a cualquiera de los dos backends intercambiables (Clojure o Spring Boot) y permite enviar mensajes y consultar el historial.
+Web client (React 18 + Vite) for the multichannel notification system. It talks over HTTP to either of the two interchangeable backends (Clojure or Spring Boot) and lets you send messages and inspect the history.
 
-## Requisitos
+## Requirements
 
-- Node.js 18 o superior
-- npm 9 o superior
-- Uno de los dos backends corriendo localmente (ver [Conectar a los backends](#conectar-a-los-backends))
+- Node.js 18 or higher
+- npm 9 or higher
+- One of the two backends running locally (see [Connecting to the backends](#connecting-to-the-backends))
 
-## Instalación
+## Install
 
 ```bash
 npm install
@@ -16,99 +16,99 @@ npm install
 
 ## Scripts
 
-| Comando | Descripción |
+| Command | Description |
 |---|---|
-| `npm run dev` | Levanta el servidor de desarrollo de Vite en `http://localhost:5173`. |
-| `npm run build` | Genera la build de producción en `dist/`. |
-| `npm run preview` | Sirve la build de producción para verificación local. |
-| `npm test` | Corre la suite de Vitest una vez (modo CI). |
-| `npm run test:watch` | Vitest en modo watch. |
+| `npm run dev` | Starts the Vite dev server at `http://localhost:5173`. |
+| `npm run build` | Produces a production build in `dist/`. |
+| `npm run preview` | Serves the production build locally for verification. |
+| `npm test` | Runs the Vitest suite once (CI-style). |
+| `npm run test:watch` | Vitest in watch mode. |
 
-Para ejecutar un solo archivo de test:
+To run a single test file:
 
 ```bash
 npx vitest run tests/components/MessageForm.test.jsx
 ```
 
-Para filtrar por nombre de test:
+To filter by test name:
 
 ```bash
-npx vitest run -t "muestra mensaje de éxito"
+npx vitest run -t "shows success message"
 ```
 
-## Conectar a los backends
+## Connecting to the backends
 
-El frontend no se construye apuntando a un backend fijo: la selección se hace en tiempo de ejecución desde el selector "Backend" en la cabecera de la UI. Las URLs están declaradas en `src/services/api.js`:
+The frontend is not built against a fixed backend: the selection happens at runtime from the "Backend" selector in the UI header. The URLs are declared in `src/services/api.js`:
 
-| Backend | URL | Puerto |
+| Backend | URL | Port |
 |---|---|---|
 | Clojure | `http://localhost:3010` | 3010 |
 | Spring Boot | `http://localhost:8088` | 8088 |
 
-### Levantar los backends
+### Starting the backends
 
-**Clojure** (desde `../backend-clojure`):
+**Clojure** (from `../backend-clojure`):
 
 ```bash
 lein run
 ```
 
-**Spring Boot** (desde `../backend-java`):
+**Spring Boot** (from `../backend-java`):
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-### Cambiar de backend en caliente
+### Switching backends at runtime
 
-En la cabecera de la app hay un toggle con dos botones: "Clojure" y "Spring Boot". Al pulsar uno:
+The app header has a toggle with two buttons: "Clojure" and "Spring Boot". Clicking one:
 
-1. Se actualiza el backend activo en `src/services/api.js`.
-2. `NotificationLog` recarga el historial contra el backend recién elegido.
-3. Los mensajes nuevos se envían al backend actualmente seleccionado.
+1. Updates the active backend inside `src/services/api.js`.
+2. Makes `NotificationLog` reload the history against the newly selected backend.
+3. Routes new messages to the currently selected backend.
 
-### Diferencias de formato entre backends
+### Response-format differences between backends
 
-Los dos backends exponen el mismo contrato (`POST /api/messages`, `GET /api/logs`) pero con convenciones de nombres distintas:
+Both backends expose the same contract (`POST /api/messages`, `GET /api/logs`) but with different naming conventions:
 
-- **Clojure** devuelve claves en kebab-case: `user-name`, `sent-at`, `users-reached`.
-- **Spring Boot** devuelve claves en camelCase: `userName`, `sentAt`, `usersReached`.
+- **Clojure** returns kebab-case keys: `user-name`, `sent-at`, `users-reached`.
+- **Spring Boot** returns camelCase keys: `userName`, `sentAt`, `usersReached`.
 
-El frontend normaliza ambas formas en `src/services/logMapper.js` y en los consumidores de las respuestas. Si se agrega un campo nuevo al contrato, hay que contemplar ambas convenciones (más snake_case como fallback defensivo).
+The frontend normalizes both shapes in `src/services/logMapper.js` and in the consumers of those responses. When adding a new field to the contract, contemplate both conventions (plus snake_case as a defensive fallback).
 
-## Estructura
+## Layout
 
 ```
 src/
-├── App.jsx                        Composición raíz
-├── main.jsx                       Punto de entrada
+├── App.jsx                        Root composition
+├── main.jsx                       Entry point
 ├── components/
-│   ├── BackendSelector/           Toggle Clojure / Spring Boot
-│   ├── MessageForm/               Formulario de envío
-│   ├── NotificationLog/           Tabla del historial
-│   └── StatusBadge/               Badge Enviado / Fallido
+│   ├── BackendSelector/           Clojure / Spring Boot toggle
+│   ├── MessageForm/               Message-send form
+│   ├── NotificationLog/           History table
+│   └── StatusBadge/               Sent / Failed badge
 ├── hooks/
-│   ├── useMessages.js             Estado del envío
-│   └── useLogs.js                 Carga del historial
+│   ├── useMessages.js             Send-state orchestration
+│   └── useLogs.js                 History loading
 ├── services/
-│   ├── api.js                     Cliente HTTP y selección de backend
-│   └── logMapper.js               Normaliza kebab / snake / camel
+│   ├── api.js                     HTTP client and backend selection
+│   └── logMapper.js               Normalizes kebab / snake / camel keys
 └── styles/
-    └── global.css                 Variables CSS globales
+    └── global.css                 Global CSS variables
 ```
 
 ## Tests
 
-Stack: Vitest + jsdom + React Testing Library. La suite cubre:
+Stack: Vitest + jsdom + React Testing Library. The suite covers:
 
-- `services/api.js`: validaciones, ruteo por backend, manejo de errores HTTP.
-- `services/logMapper.js`: normalización de los tres formatos de claves.
-- `hooks/useMessages.js` y `hooks/useLogs.js`: estados de carga, error, resultado y auto-refresh.
-- `components/MessageForm`, `components/NotificationLog`, `components/BackendSelector`: render, interacción y rutas de datos.
+- `services/api.js`: validation, backend routing, HTTP error handling.
+- `services/logMapper.js`: normalization of the three key formats.
+- `hooks/useMessages.js` and `hooks/useLogs.js`: loading, error, result and auto-refresh states.
+- `components/MessageForm`, `components/NotificationLog`, `components/BackendSelector`: render, interaction, data paths.
 
-## Solución de problemas
+## Troubleshooting
 
-- **"Failed to fetch" en la UI**: el backend seleccionado no está corriendo. Verifica el puerto correspondiente (3010 o 8088) y que no haya un CORS bloqueando las requests.
-- **El historial se ve vacío al cambiar de backend**: cada backend tiene su propio almacenamiento de logs, no comparten estado.
-- **Puerto 5173 en uso**: edita `vite.config.js` o exporta `PORT=xxxx` antes de `npm run dev`.
-- **Los nombres de usuario o fechas aparecen vacíos**: probablemente el backend introdujo un nuevo formato de clave. Revisa `src/services/logMapper.js` y añade la variante.
+- **"Failed to fetch" in the UI**: the selected backend is not running. Verify its port (3010 or 8088) and that no CORS is blocking the requests.
+- **History looks empty after switching backend**: each backend has its own log storage; they do not share state.
+- **Port 5173 already in use**: edit `vite.config.js` or export `PORT=xxxx` before `npm run dev`.
+- **User names or dates render empty**: the backend likely introduced a new key format. Check `src/services/logMapper.js` and add the new variant.

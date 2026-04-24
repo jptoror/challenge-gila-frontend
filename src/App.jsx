@@ -23,7 +23,7 @@ export default function App() {
         <div>
           <h1 style={{ fontSize: '16px', fontWeight: '500' }}>Notification System</h1>
           <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginTop: '2px' }}>
-            Sistema de notificaciones multicanal
+            Multichannel notification system
           </p>
         </div>
         <BackendSelector onChange={bumpRefresh} />

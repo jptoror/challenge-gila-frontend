@@ -14,84 +14,84 @@ describe('MessageForm', () => {
     vi.clearAllMocks()
   })
 
-  it('renderiza el formulario con todos sus campos', () => {
+  it('renders the form with all its fields', () => {
     render(<MessageForm />)
-    expect(screen.getByLabelText(/categoría/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/mensaje/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /enviar/i })).toBeInTheDocument()
+    expect(screen.getByLabelText(/category/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/message/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /send/i })).toBeInTheDocument()
   })
 
-  it('el botón de submit empieza deshabilitado', () => {
+  it('submit button starts disabled', () => {
     render(<MessageForm />)
-    expect(screen.getByRole('button', { name: /enviar/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /send/i })).toBeDisabled()
   })
 
-  it('el botón se habilita cuando hay categoría y mensaje', async () => {
+  it('enables the button when category and message are provided', async () => {
     render(<MessageForm />)
-    await userEvent.selectOptions(screen.getByLabelText(/categoría/i), 'sports')
-    await userEvent.type(screen.getByLabelText(/mensaje/i), 'Hola')
-    expect(screen.getByRole('button', { name: /enviar/i })).not.toBeDisabled()
+    await userEvent.selectOptions(screen.getByLabelText(/category/i), 'sports')
+    await userEvent.type(screen.getByLabelText(/message/i), 'Hello')
+    expect(screen.getByRole('button', { name: /send/i })).not.toBeDisabled()
   })
 
-  it('muestra las tres categorías disponibles', () => {
+  it('shows the three available categories', () => {
     render(<MessageForm />)
-    const select = screen.getByLabelText(/categoría/i)
+    const select = screen.getByLabelText(/category/i)
     expect(select).toContainElement(screen.getByRole('option', { name: /sports/i }))
     expect(select).toContainElement(screen.getByRole('option', { name: /finance/i }))
     expect(select).toContainElement(screen.getByRole('option', { name: /movies/i }))
   })
 
-  it('muestra mensaje de éxito después de enviar', async () => {
+  it('shows success message after sending', async () => {
     sendMessage.mockResolvedValue({ category: 'sports', 'users-reached': 2, results: [] })
     render(<MessageForm />)
-    await userEvent.selectOptions(screen.getByLabelText(/categoría/i), 'sports')
-    await userEvent.type(screen.getByLabelText(/mensaje/i), 'Gol!')
-    await userEvent.click(screen.getByRole('button', { name: /enviar/i }))
+    await userEvent.selectOptions(screen.getByLabelText(/category/i), 'sports')
+    await userEvent.type(screen.getByLabelText(/message/i), 'Goal!')
+    await userEvent.click(screen.getByRole('button', { name: /send/i }))
     await waitFor(() => {
-      expect(screen.getByRole('status')).toHaveTextContent('2 usuarios')
+      expect(screen.getByRole('status')).toHaveTextContent('2 users')
     })
   })
 
-  it('muestra error cuando el API falla', async () => {
-    sendMessage.mockRejectedValue(new Error('Error de conexión'))
+  it('shows error when the API fails', async () => {
+    sendMessage.mockRejectedValue(new Error('Connection error'))
     render(<MessageForm />)
-    await userEvent.selectOptions(screen.getByLabelText(/categoría/i), 'finance')
-    await userEvent.type(screen.getByLabelText(/mensaje/i), 'Test')
-    await userEvent.click(screen.getByRole('button', { name: /enviar/i }))
+    await userEvent.selectOptions(screen.getByLabelText(/category/i), 'finance')
+    await userEvent.type(screen.getByLabelText(/message/i), 'Test')
+    await userEvent.click(screen.getByRole('button', { name: /send/i }))
     await waitFor(() => {
-      expect(screen.getByRole('alert')).toHaveTextContent('Error de conexión')
+      expect(screen.getByRole('alert')).toHaveTextContent('Connection error')
     })
   })
 
-  it('muestra el conteo con respuesta camelCase de Spring Boot', async () => {
+  it('shows the count with a Spring Boot camelCase response', async () => {
     sendMessage.mockResolvedValue({ category: 'finance', usersReached: 3, results: [] })
     render(<MessageForm />)
-    await userEvent.selectOptions(screen.getByLabelText(/categoría/i), 'finance')
-    await userEvent.type(screen.getByLabelText(/mensaje/i), 'Subida del dólar')
-    await userEvent.click(screen.getByRole('button', { name: /enviar/i }))
+    await userEvent.selectOptions(screen.getByLabelText(/category/i), 'finance')
+    await userEvent.type(screen.getByLabelText(/message/i), 'Dollar rising')
+    await userEvent.click(screen.getByRole('button', { name: /send/i }))
     await waitFor(() => {
-      expect(screen.getByRole('status')).toHaveTextContent('3 usuarios')
+      expect(screen.getByRole('status')).toHaveTextContent('3 users')
     })
   })
 
-  it('muestra 0 usuarios cuando la respuesta no trae el campo', async () => {
+  it('shows 0 users when the response has no count field', async () => {
     sendMessage.mockResolvedValue({ category: 'sports', results: [] })
     render(<MessageForm />)
-    await userEvent.selectOptions(screen.getByLabelText(/categoría/i), 'sports')
-    await userEvent.type(screen.getByLabelText(/mensaje/i), 'Test')
-    await userEvent.click(screen.getByRole('button', { name: /enviar/i }))
+    await userEvent.selectOptions(screen.getByLabelText(/category/i), 'sports')
+    await userEvent.type(screen.getByLabelText(/message/i), 'Test')
+    await userEvent.click(screen.getByRole('button', { name: /send/i }))
     await waitFor(() => {
-      expect(screen.getByRole('status')).toHaveTextContent('0 usuarios')
+      expect(screen.getByRole('status')).toHaveTextContent('0 users')
     })
   })
 
-  it('llama a onSuccess después de enviar con éxito', async () => {
+  it('calls onSuccess after a successful send', async () => {
     sendMessage.mockResolvedValue({ category: 'sports', 'users-reached': 1, results: [] })
     const onSuccess = vi.fn()
     render(<MessageForm onSuccess={onSuccess} />)
-    await userEvent.selectOptions(screen.getByLabelText(/categoría/i), 'movies')
-    await userEvent.type(screen.getByLabelText(/mensaje/i), 'Nueva película')
-    await userEvent.click(screen.getByRole('button', { name: /enviar/i }))
+    await userEvent.selectOptions(screen.getByLabelText(/category/i), 'movies')
+    await userEvent.type(screen.getByLabelText(/message/i), 'New movie')
+    await userEvent.click(screen.getByRole('button', { name: /send/i }))
     await waitFor(() => expect(onSuccess).toHaveBeenCalledOnce())
   })
 })

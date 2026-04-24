@@ -8,5 +8,5 @@ export default function StatusBadge({ success }) {
     background: success ? 'var(--color-green-bg)' : 'var(--color-red-bg)',
     color:      success ? 'var(--color-green-text)' : 'var(--color-red-text)',
   }
-  return <span style={style}>{success ? 'Enviado' : 'Fallido'}</span>
+  return <span style={style}>{success ? 'Sent' : 'Failed'}</span>
 }

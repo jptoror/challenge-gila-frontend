@@ -13,7 +13,7 @@ describe('useLogs', () => {
     vi.clearAllMocks()
   })
 
-  it('carga los logs en el primer render', async () => {
+  it('loads the logs on first render', async () => {
     const mockLogs = [{ id: 1, channel: 'sms' }]
     fetchLogs.mockResolvedValue(mockLogs)
     const { result } = renderHook(() => useLogs(false))
@@ -22,14 +22,14 @@ describe('useLogs', () => {
     expect(result.current.error).toBeNull()
   })
 
-  it('expone el error cuando el fetch falla', async () => {
-    fetchLogs.mockRejectedValue(new Error('No hay conexión'))
+  it('exposes the error when fetch fails', async () => {
+    fetchLogs.mockRejectedValue(new Error('No connection'))
     const { result } = renderHook(() => useLogs(false))
-    await waitFor(() => expect(result.current.error).toBe('No hay conexión'))
+    await waitFor(() => expect(result.current.error).toBe('No connection'))
     expect(result.current.logs).toEqual([])
   })
 
-  it('reload vuelve a llamar al fetch', async () => {
+  it('reload calls fetch again', async () => {
     fetchLogs.mockResolvedValue([])
     const { result } = renderHook(() => useLogs(false))
     await waitFor(() => expect(fetchLogs).toHaveBeenCalledTimes(1))
@@ -45,7 +45,7 @@ describe('useLogs', () => {
       vi.useRealTimers()
     })
 
-    it('refresca automáticamente cada 5 segundos cuando está activo', async () => {
+    it('auto-refreshes every 5 seconds when enabled', async () => {
       fetchLogs.mockResolvedValue([])
       renderHook(() => useLogs(true))
       await vi.waitFor(() => expect(fetchLogs).toHaveBeenCalledTimes(1))
@@ -55,7 +55,7 @@ describe('useLogs', () => {
       expect(fetchLogs).toHaveBeenCalledTimes(3)
     })
 
-    it('no refresca automáticamente cuando autoRefresh es false', async () => {
+    it('does not auto-refresh when autoRefresh is false', async () => {
       fetchLogs.mockResolvedValue([])
       renderHook(() => useLogs(false))
       await vi.waitFor(() => expect(fetchLogs).toHaveBeenCalledTimes(1))
